@@ -17,7 +17,7 @@ namespace Service.ServiceHost
 
         void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IFoo, Foo>();
+            services.AddTransient<INotifier, Notifier>();
         }
 
         public bool Start(HostControl hostControl)
@@ -25,6 +25,12 @@ namespace Service.ServiceHost
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
+
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var notifier = ServiceProvider.GetRequiredService<INotifier>();
+                notifier.PrintMessage();
+            }
 
             return true;
         }
